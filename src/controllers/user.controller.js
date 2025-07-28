@@ -20,14 +20,14 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   //now
   //1. get user details from frontend
-  const { fullname, email, username, password } = req.body;
+  const { fullName, email, username, password } = req.body;
 
   //2. validation - check not empty
-  // if(fullname == "" ) {
-  //   throw new ApiError(400,"fullname is required")
+  // if(fullName == "" ) {
+  //   throw new ApiError(400,"fullName is required")
   // }
   if (
-    [fullname, email, username, password].some((filed) => filed?.trim() === "") //some checks if any field is empty
+    [fullName, email, username, password].some((filed) => filed?.trim() === "") //some checks if any field is empty
   ) {
     throw new ApiError(400, "All fields are required");
   }
@@ -48,8 +48,18 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   //4. check for cover img, and avatar
-  const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+
+  //classic way to check if coverImage is present
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
@@ -65,7 +75,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   //6. create user object - crete entry in db
   const user = await User.create({
-    fullname,
+    fullName,
     avatar: avatar.url,
     coverImage: coverImage?.url || "",
     email,
@@ -84,7 +94,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 
   //9. return response with user details
-  return res.status(201).json(
-    new ApiResponse(200, createdUser,"User registered successfully")
-  )
+  return res
+    .status(201)
+    .json(new ApiResponse(200, createdUser, "User registered successfully"));
 });

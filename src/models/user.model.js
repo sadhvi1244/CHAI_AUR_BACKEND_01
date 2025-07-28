@@ -19,7 +19,7 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    fullname: {
+    fullName: {
       type: String,
       required: true,
       trim: true,
@@ -32,7 +32,7 @@ const userSchema = new Schema(
     coverImage: {
       type: String, //cloudinary url
     },
-    warchHistory: [
+    watchHistory: [
       {
         type: Schema.Types.ObjectId,
         ref: "Video",
@@ -44,7 +44,7 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   { timestamps: true }
@@ -62,13 +62,13 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       //payload data to be included in the token
       _id: this._id,
       email: this.email,
       username: this.username,
-      fullname: this.fullname,
+      fullName: this.fullName,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -78,7 +78,7 @@ userSchema.methods.generateAccessToken = function () {
 };
 
 userSchema.methods.generateRefereshToken = function () {
-  jwt.sign(
+  return jwt.sign(
     {
       //payload data to be included in the token
       _id: this._id,
@@ -90,4 +90,6 @@ userSchema.methods.generateRefereshToken = function () {
   );
 };
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
