@@ -38,9 +38,9 @@ const userSchema = new Schema(
         ref: "Video",
       },
     ],
-    passward: {
+    password: {
       type: String,
-      required: [true, "passward is required"],
+      required: [true, "password is required"],
     },
     refreshToken: {
       type: String,
@@ -52,13 +52,13 @@ const userSchema = new Schema(
 
 //pre middleware to generate JWT token
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("passward")) return next(); //we only want to hash the password if it has been modified or is new
-  this.passward = await bcrypt.hash(this.passward, 10); //hashing the password before saving for 10 rounds
+  if (!this.isModified("password")) return next(); //we only want to hash the password if it has been modified or is new
+  this.password = await bcrypt.hash(this.password, 10); //hashing the password before saving for 10 rounds
   next();
 });
 
-userSchema.methods.isPasswordCorrect = async function (passward) {
-  return await bcrypt.compare(passward, this.passward);
+userSchema.methods.isPasswordCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generateAccessToken = function () {

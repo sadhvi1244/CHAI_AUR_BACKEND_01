@@ -2,19 +2,16 @@
 
 //promise-based error handler for async functions in Express.js
 const asyncHandler = (requestHandler) => {
-    (req,res,next) =>{
-        Promise.resolve(requestHandler(req,res,next)).catch((err)=>next(err))
-    }
-}
+  return (req, res, next) => {
+    Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
+  };
+};
 
-
-
-export {asyncHandler}
+export { asyncHandler };
 
 // const asyncHandler = () => {}  // basic arrow function with no parameters
 // const asyncHandler = (func) => () => {}  // higher-order function — it accepts a function func and returns another (inner) function with no parameters.
 // const asyncHandler = (func) => async (req, res, next) => {} //higher-order function that takes an async func (a controller) and wraps it in a try/catch-like behavior. async function that receives req, res, next — just like any Express route handler.
-
 
 //try-catch block to handle errors in async functions
 // const asyncHandler = (fn) => async (req,res,next) => {
